@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/cookie-manager.js"></script>
+    <script>
+        var x = {
+            "user-preference-configuration-form-id": "cookie-manager-form",
+            "cookie-banner-id": "cm_cookie_notification",
+            "cookie-banner-visible-on-page-with-preference-form": true,
+            "cookie-manifest": [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [
+                        "essential-cookie",
+                        "another-essential-cookie",
+                        "some-imperva-cookie",
+                        "some-other-imperva-cookie"
+                    ]
+                },
+                {
+                    "category-name": "analytics",
+                    "optional": true,
+                    "cookies": [
+                        "_ga",
+                        "_gtm"
+                    ]
+                },
+                {
+                    "category-name": "feedback",
+                    "optional": true,
+                    "cookies": [
+                        "_hotjar",
+                        "_surveything"
+                    ]
+                }
+            ]
+        };
+        cm.init(x);
+    </script>
+    </head>
+    <style type="text/css">
+        .hidden {
+            display: none;
+        }
+    </style>
+<body>
+
+<header id="cm_cookie_notification" class="hidden">
+    <h2>Tell us whether you accept cookies</h2>
+    <p>We use cookies to collect information about how you use GOV.UK. We use this information to make the website work as well as possible and improve government services.</p>
+    <button type="submit" class="btn">Accept all cookies</button>
+    <a class="btn" href="set-preferences-page.html">Set cookie preferences</a>
+</header>
+
+<form id="cookie-manager-form">
+
+    <fieldset>
+        <legend>Analytics:</legend>
+        <input type="radio" name="analytics" value="on" /> On <br/>
+        <input type="radio" name="analytics" value="off" checked /> Off <br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Feedback:</legend>
+        <input type="radio" name="feedback" value="on" /> On <br/>
+        <input type="radio" name="feedback" value="off" checked /> Off <br/>
+    </fieldset>
+
+    <input type="submit" value="Save Preferences"/>
+
+</form>
+
+</body>
+</html>
