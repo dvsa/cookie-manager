@@ -1,0 +1,26 @@
+{
+  "name": "@dvsa/cookie-manager",
+  "version": "1.0.3",
+  "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
+  "main": "cookie-manager.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dvsa/cookie-manager.git"
+  },
+  "author": "Driver and Vehicle Standards Agency",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dvsa/cookie-manager/issues"
+  },
+  "homepage": "https://github.com/dvsa/cookie-manager#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "jsdom": "^16.1.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^7.0.1"
+  }
+}
