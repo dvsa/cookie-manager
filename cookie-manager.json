@@ -1,0 +1,38 @@
+{
+  "delete-undefined-cookies": true,
+  "user-preference-cookie-name": "cm-user-preferences",
+  "user-preference-cookie-secure": false,
+  "user-preference-cookie-expiry-days": 365,
+  "user-preference-configuration-form-id": "cookie-manager-form",
+  "cookie-banner-id": "cm_cookie_notification",
+  "cookie-banner-visibility-class": "hidden",
+  "cookie-banner-visible-on-page-with-preference-form": false,
+  "cookie-manifest": [
+    {
+      "category-name": "essential",
+      "optional": false,
+      "cookies": [
+        "essential-cookie",
+        "another-essential-cookie",
+        "some-imperva-cookie",
+        "some-other-imperva-cookie"
+      ]
+    },
+    {
+      "category-name": "analytics",
+      "optional": true,
+      "cookies": [
+        "_ga",
+        "_gtm"
+      ]
+    },
+    {
+      "category-name": "feedback",
+      "optional": true,
+      "cookies": [
+        "_hotjar",
+        "_surveything"
+      ]
+    }
+  ]
+}
