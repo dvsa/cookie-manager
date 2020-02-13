@@ -92,7 +92,7 @@ const cookieManager = (function () {
                 continue;
             }
 
-            if (cm_user_preferences[cookie_category['category-name']] === 'off') {
+            if (cm_user_preferences[cookie_category['category-name']] === 'off' || cm_user_preferences[cookie_category['category-name']] === 'false') {
                 console.info(`Cookie "${cookie_name}" is listed under category "${cookie_category['category-name']}"; user preferences opts out of this category; deleting.`);
                 deleteCookie(cookie_name);
                 continue;
@@ -156,11 +156,16 @@ const cookieManager = (function () {
     };
 
     const deleteCookie = function(cookie_name) {
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+window.location.hostname;
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+window.location.hostname +';path=/;';
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=.'+window.location.hostname +';path=/;';
+
         let firstDot = window.location.hostname.indexOf('.');
         let upperDomain = window.location.hostname.substring(firstDot);
         document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+upperDomain;
+        console.debug(window.location.hostname);
+        console.debug(upperDomain);
+
         console.debug(`Deleted cookie "${cookie_name}"`);
     };
 
@@ -335,7 +340,7 @@ const cookieManager = (function () {
             // User has preferences set, no need to show cookie banner.
             if (!theBanner.classList.contains(bannerVisibilityClass)) {
                 theBanner.classList.add(bannerVisibilityClass);
-                console.debug('Cookie banner was set to NOT visible.')
+                console.debug('Cookie banner was set to visible.')
             }
         } else {
             theBanner.classList.remove(bannerVisibilityClass);
