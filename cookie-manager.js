@@ -162,7 +162,7 @@ const cookieManager = (function () {
 
         let firstDot = window.location.hostname.indexOf('.');
         let upperDomain = window.location.hostname.substring(firstDot);
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+upperDomain;
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+upperDomain+';path=/;';
         console.debug(window.location.hostname);
         console.debug(upperDomain);
 
