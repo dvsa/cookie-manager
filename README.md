@@ -104,11 +104,13 @@ cm.init(
   "delete-undefined-cookies": true,
   "user-preference-cookie-name": "cm-user-preferences",
   "user-preference-cookie-secure": false,
+  "user-preference-saved-callback" : false, //accept a function
   "user-preference-cookie-expiry-days": 365,
   "user-preference-configuration-form-id": "cookie-manager-form",
   "cookie-banner-id": "cm_cookie_notification",
   "cookie-banner-visibility-class": "hidden",
   "cookie-banner-visible-on-page-with-preference-form": false,
+  "set-checkboxes-in-preference-form": true,
   "cookie-manifest": [
     {
       "category-name": "essential",
