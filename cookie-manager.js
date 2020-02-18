@@ -36,7 +36,9 @@ const cookieManager = (function () {
         console.debug(options);
 
         manageCookies(options);
-        findAndBindPreferencesForm(options);
+        if (document.getElementById(custom_options['user-preference-configuration-form-id'])) {
+            findAndBindPreferencesForm(options);
+        }
         findAndBindCookieBanner(options);
     };
 
