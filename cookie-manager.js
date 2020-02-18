@@ -344,7 +344,7 @@ const cookieManager = (function () {
             // User has preferences set, no need to show cookie banner.
             if (!theBanner.classList.contains(bannerVisibilityClass)) {
                 theBanner.classList.add(bannerVisibilityClass);
-                console.debug('Cookie banner was set to visible.')
+                console.debug('Cookie banner was set to invisible.');
             }
         } else {
             if (user_preference_form !== null && visible_on_preference_page === false) {
