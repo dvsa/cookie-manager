@@ -207,14 +207,15 @@ const cookieManager = (function () {
         }
 
         const theForm = getForm(configuration);
-        if (theForm !== null) {
-            theForm.addEventListener('submit', function(e) {
-                savePreferencesFromForm(e, configuration);
-                manageCookies(configuration);
-                checkShouldCookieBannerBeVisible(configuration);
-            });
-            console.debug(`Found and bound to cookie preference form with ID "${configuration['user-preference-configuration-form-id']}".`);
+        if (theForm === null) {
+            return;
         }
+        theForm.addEventListener('submit', function (e) {
+            savePreferencesFromForm(e, configuration);
+            manageCookies(configuration);
+            checkShouldCookieBannerBeVisible(configuration);
+        });
+        console.debug(`Found and bound to cookie preference form with ID "${configuration['user-preference-configuration-form-id']}".`);
         setPreferencesInForm(configuration);
     };
 
@@ -229,6 +230,9 @@ const cookieManager = (function () {
         }
 
         const theForm = getForm(configuration);
+        if (theForm === null) {
+            return;
+        }
         const userPreferences = getUserPreferences(configuration['user-preference-cookie-name']);
 
         for (const category in userPreferences)
