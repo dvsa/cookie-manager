@@ -26,8 +26,11 @@ const cookieManager = (function () {
         "cookie-manifest": []
     };
 
+    let options = {};
+
     const init = function (custom_options) {
-        let options = defaultOptions;
+
+        options = defaultOptions;
 
         for (const item in custom_options) {
             options[item] = custom_options[item];
@@ -35,14 +38,14 @@ const cookieManager = (function () {
 
         console.debug(options);
 
-        manageCookies(options);
-        findAndBindPreferencesForm(options);
-        findAndBindCookieBanner(options);
+        manageCookies();
+        findAndBindPreferencesForm();
+        findAndBindCookieBanner();
     };
 
-    const manageCookies = function(config) {
+    const manageCookies = function() {
 
-        const cm_cookie = config['user-preference-cookie-name'];
+        const cm_cookie = options['user-preference-cookie-name'];
         const cm_user_preferences = getUserPreferences(cm_cookie);
 
         if (!cm_user_preferences) {
@@ -69,10 +72,10 @@ const cookieManager = (function () {
                 continue;
             }
 
-            const cookie_category = getCookieCategoryFromManifest(cookie_name, config);
+            const cookie_category = getCookieCategoryFromManifest(cookie_name);
 
             if (cookie_category === false) {
-                if (config['delete-undefined-cookies']) {
+                if (options['delete-undefined-cookies']) {
                     console.info(`Cookie "${cookie_name}" is not in the manifest and "delete-undefined-cookies" is enabled; deleting.`);
                     deleteCookie(cookie_name);
                 } else {
@@ -104,9 +107,9 @@ const cookieManager = (function () {
         console.debug(`Finishing processing all cookies.`);
     };
 
-    const getUserPreferences = function(cm_cookie) {
+    const getUserPreferences = function() {
 
-        const cookie = getCookie(cm_cookie);
+        const cookie = getCookie(options['user-preference-cookie-name']);
 
         if (!cookie) {
             return false;
@@ -120,9 +123,9 @@ const cookieManager = (function () {
         }
     };
 
-    const getCookieCategoryFromManifest = function(cookie_name, configuration) {
+    const getCookieCategoryFromManifest = function(cookie_name) {
 
-        const cookie_manifest = configuration['cookie-manifest'];
+        const cookie_manifest = options['cookie-manifest'];
 
         for (var i = 0; i < cookie_manifest.length; i++) {
             const category_cookies = cookie_manifest[i]['cookies'];
@@ -156,29 +159,55 @@ const cookieManager = (function () {
     };
 
     const deleteCookie = function(cookie_name) {
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+window.location.hostname +';path=/;';
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=.'+window.location.hostname +';path=/;';
+        deleteCookieWithoutDomain(cookie_name);
 
-        let firstDot = window.location.hostname.indexOf('.');
-        let upperDomain = window.location.hostname.substring(firstDot);
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+upperDomain+';path=/;';
-        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=.'+upperDomain+';path=/;';
-        console.debug(window.location.hostname);
-        console.debug(upperDomain);
+        if(configOptionIsNotEmptyObject('domains')) {
+            let dotHostname = "." + window.location.hostname;
+            for(var i = 0; i < options['domains'].length; i++) {
+                if (dotHostname.indexOf(options['domains'][i]) >=0) {
+                    deleteCookieFromDomain(cookie_name, options['domains'][i]);
+                }
+            }
+        } else {
+            deleteCookieFromCurrentAndUpperDomain(cookie_name);
+        }
 
         console.debug(`Deleted cookie "${cookie_name}"`);
     };
 
-    const setCookie = function(configuration, cookie_value) {
+    const deleteCookieWithoutDomain = function (cookie_name) {
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+    };
 
-        const cookie_name = configuration['user-preference-cookie-name'];
+    const deleteCookieFromCurrentAndUpperDomain = function (cookie_name) {
+        let hostname = window.location.hostname;
+        let dotHostname = "." + hostname;
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+ hostname +';path=/;';
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+ dotHostname +';path=/;';
 
-        let cookie_secure = configOptionIsTrue(configuration, 'user-preference-cookie-secure');
+        let firstDot = hostname.indexOf('.');
+        let upperDomain = hostname.substring(firstDot);
+        let dotUpperDomain = "." + upperDomain;
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+ upperDomain +';path=/;';
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain='+ dotUpperDomain +';path=/;';
+    };
+
+    const deleteCookieFromDomain = function(cookie_name, domain) {
+        let dotDomain = "." + domain;
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=' + domain + ';path=/;';
+        document.cookie = cookie_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=' + dotDomain + ';path=/;';
+        console.debug('delete ' + cookie_name + ' in ' + domain + ' and ' + dotDomain);
+    };
+
+    const setCookie = function(cookie_value) {
+
+        const cookie_name = options['user-preference-cookie-name'];
+
+        let cookie_secure = configOptionIsTrue('user-preference-cookie-secure');
 
         let cookie_expiry_days = 365;
-        if (configOptionIsNumeric(configuration, 'user-preference-cookie-expiry-days')) {
-            cookie_expiry_days = configuration['user-preference-cookie-expiry-days'];
+        if (configOptionIsNumeric('user-preference-cookie-expiry-days')) {
+            cookie_expiry_days = options['user-preference-cookie-expiry-days'];
         }
 
         const date = new Date();
@@ -191,9 +220,9 @@ const cookieManager = (function () {
         document.cookie = cookie_raw;
     };
 
-    const findAndBindPreferencesForm = function(configuration) {
+    const findAndBindPreferencesForm = function() {
 
-        if (!configOptionIsString(configuration, 'user-preference-configuration-form-id')
+        if (!configOptionIsString('user-preference-configuration-form-id')
         ) {
             console.debug("Skipping binding to user cookie preference form.");
             return;
@@ -201,40 +230,40 @@ const cookieManager = (function () {
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                findAndBindPreferencesForm(configuration);
+                findAndBindPreferencesForm();
             });
             console.debug("DOM is not ready; adding event to bind to form when ready.");
             return;
         }
 
-        const theForm = getForm(configuration);
+        const theForm = getForm();
         if (theForm === null) {
             return;
         }
         theForm.addEventListener('submit', function (e) {
-            savePreferencesFromForm(e, configuration);
-            manageCookies(configuration);
-            checkShouldCookieBannerBeVisible(configuration);
+            savePreferencesFromForm(e);
+            manageCookies();
+            checkShouldCookieBannerBeVisible();
         });
-        console.debug(`Found and bound to cookie preference form with ID "${configuration['user-preference-configuration-form-id']}".`);
-        setPreferencesInForm(configuration);
+        console.debug(`Found and bound to cookie preference form with ID "${options['user-preference-configuration-form-id']}".`);
+        setPreferencesInForm();
     };
 
-    const getForm = function (configuration) {
-        return document.getElementById(configuration["user-preference-configuration-form-id"]);
-    }
+    const getForm = function () {
+        return document.getElementById(options["user-preference-configuration-form-id"]);
+    };
 
-    const setPreferencesInForm = function (configuration) {
-        if (configOptionIsFalse(configuration, 'set-checkboxes-in-preference-form')) {
+    const setPreferencesInForm = function () {
+        if (configOptionIsFalse('set-checkboxes-in-preference-form')) {
             console.log("Skipping set preferences in form");
             return;
         }
 
-        const theForm = getForm(configuration);
+        const theForm = getForm();
         if (theForm === null) {
             return;
         }
-        const userPreferences = getUserPreferences(configuration['user-preference-cookie-name']);
+        const userPreferences = getUserPreferences();
 
         for (const category in userPreferences)
         {
@@ -245,14 +274,14 @@ const cookieManager = (function () {
                 }
             }
         }
-    }
+    };
 
-    const savePreferencesFromForm = function (event, configuration) {
+    const savePreferencesFromForm = function (event) {
         event.preventDefault();
 
         console.debug('Saving user cookie preferences from Form...');
 
-        const theForm = document.getElementById(configuration["user-preference-configuration-form-id"]);
+        const theForm = document.getElementById(options["user-preference-configuration-form-id"]);
         const radioInputs = theForm.querySelectorAll('input[type="radio"]:checked');
 
         const categories = {};
@@ -265,49 +294,49 @@ const cookieManager = (function () {
             categories[node.getAttribute('name')] = node.getAttribute('value');
         }
 
-        savePreferences(configuration, categories);
+        savePreferences(categories);
 
-        if (configuration['user-preference-saved-callback'] !== false && typeof configuration['user-preference-saved-callback'] === 'function') {
-            configuration['user-preference-saved-callback']();
+        if (options['user-preference-saved-callback'] !== false && typeof options['user-preference-saved-callback'] === 'function') {
+            options['user-preference-saved-callback']();
         }
 
     };
 
-    const savePreferencesFromCookieBannerAcceptAll = function (event, configuration) {
+    const savePreferencesFromCookieBannerAcceptAll = function (event) {
         event.preventDefault();
 
         console.debug('Saving user cookie preferences from Cookie Banner (accept all)...');
 
         const categories = {};
 
-        for (var i = 0; i < configuration['cookie-manifest'].length; i++) {
-            const category = configuration['cookie-manifest'][i];
+        for (var i = 0; i < options['cookie-manifest'].length; i++) {
+            const category = options['cookie-manifest'][i];
             if (category['optional']) {
                 categories[category['category-name']] = 'on';
             }
         }
 
-        savePreferences(configuration, categories);
+        savePreferences(categories);
     };
 
-    const savePreferences = function(configuration, user_cookie_preferences) {
-        setCookie(configuration, JSON.stringify(user_cookie_preferences));
-        console.debug('Saved user cookie preferences to cookie', getCookie(configuration['user-preference-cookie-name']));
+    const savePreferences = function(user_cookie_preferences) {
+        setCookie(JSON.stringify(user_cookie_preferences));
+        console.debug('Saved user cookie preferences to cookie', getCookie(options['user-preference-cookie-name']));
     };
 
-    const addAcceptAllListener = function (acceptAllButton, configuration) {
+    const addAcceptAllListener = function (acceptAllButton) {
         if (acceptAllButton !== null) {
             acceptAllButton.addEventListener('click', function (e) {
-                savePreferencesFromCookieBannerAcceptAll(e, configuration);
-                manageCookies(configuration);
-                checkShouldCookieBannerBeVisible(configuration);
+                savePreferencesFromCookieBannerAcceptAll(e);
+                manageCookies();
+                checkShouldCookieBannerBeVisible();
             });
         }
     };
 
-    const findAndBindCookieBanner = function (configuration) {
-        if (!configOptionIsString(configuration, 'cookie-banner-id')
-            && !configOptionIsString(configuration, 'cookie-banner-visibility-class')
+    const findAndBindCookieBanner = function () {
+        if (!configOptionIsString('cookie-banner-id')
+            && !configOptionIsString('cookie-banner-visibility-class')
         ) {
             console.debug('Skipping binding to cookie banner as both cookie-banner-id and cookie-banner-visibility-class are not defined');
             return;
@@ -315,34 +344,34 @@ const cookieManager = (function () {
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                findAndBindCookieBanner(configuration);
+                findAndBindCookieBanner();
             });
             console.debug('DOM is not ready; adding event to bind to cookie banner when ready.');
             return;
         }
 
-        const theBanner = document.getElementById(configuration['cookie-banner-id']);
+        const theBanner = document.getElementById(options['cookie-banner-id']);
         const acceptAllButton = document.querySelector('button[type="submit"]');
         if (theBanner !== null) {
-            addAcceptAllListener(acceptAllButton, configuration);
-            console.debug(`Found and bound to cookie banner with ID "${configuration['cookie-banner-id']}".`);
-            checkShouldCookieBannerBeVisible(configuration);
+            addAcceptAllListener(acceptAllButton);
+            console.debug(`Found and bound to cookie banner with ID "${options['cookie-banner-id']}".`);
+            checkShouldCookieBannerBeVisible();
         }
     };
 
-    const checkShouldCookieBannerBeVisible = function(configuration) {
+    const checkShouldCookieBannerBeVisible = function() {
 
-        const theBanner = document.getElementById(configuration['cookie-banner-id']);
-        const bannerVisibilityClass = configuration['cookie-banner-visibility-class'];
+        const theBanner = document.getElementById(options['cookie-banner-id']);
+        const bannerVisibilityClass = options['cookie-banner-visibility-class'];
         if (theBanner === null || bannerVisibilityClass === null) {
             console.error('Cannot work with cookie banner unless cookie-banner-id and cookie-banner-visibility-class are configured.');
             return;
         }
 
-        const user_preference_form = document.getElementById(configuration['user-preference-configuration-form-id']);
-        const visible_on_preference_page = configuration['cookie-banner-visible-on-page-with-preference-form'];
+        const user_preference_form = document.getElementById(options['user-preference-configuration-form-id']);
+        const visible_on_preference_page = options['cookie-banner-visible-on-page-with-preference-form'];
 
-        const cm_cookie = configuration['user-preference-cookie-name'];
+        const cm_cookie = options['user-preference-cookie-name'];
         if (getUserPreferences(cm_cookie)) {
             // User has preferences set, no need to show cookie banner.
             if (!theBanner.classList.contains(bannerVisibilityClass)) {
@@ -369,26 +398,32 @@ const cookieManager = (function () {
         return (days ^ 0) === days;
     };
 
-    const configOptionIsTrue = function (configuration, optionName) {
-        return configuration.hasOwnProperty(optionName) && configuration[optionName] === true;
+    const configOptionIsTrue = function (optionName) {
+        return options.hasOwnProperty(optionName) && options[optionName] === true;
     };
 
-    const configOptionIsFalse = function (configuration, optionName) {
-        if (configuration.hasOwnProperty(optionName)) {
-            return configuration[optionName] === false;
+    const configOptionIsFalse = function (optionName) {
+        if (options.hasOwnProperty(optionName)) {
+            return options[optionName] === false;
         }
         return true;
     };
 
-    const configOptionIsNumeric = function (configuration, optionName) {
-        return configuration.hasOwnProperty(optionName)
-            && !isNaN(configuration[optionName]);
+    const configOptionIsNumeric = function (optionName) {
+        return options.hasOwnProperty(optionName)
+            && !isNaN(options[optionName]);
     };
 
-    const configOptionIsString = function (configuration, optionName) {
-        return configuration.hasOwnProperty(optionName)
-            && typeof configuration[optionName] === 'string'
-            && configuration[optionName].trim() !== '';
+    const configOptionIsString = function (optionName) {
+        return options.hasOwnProperty(optionName)
+            && typeof options[optionName] === 'string'
+            && options[optionName].trim() !== '';
+    };
+
+    const configOptionIsNotEmptyObject = function (optionName) {
+        return options.hasOwnProperty(optionName)
+            && typeof options[optionName] === 'object'
+            && options[optionName].length > 0;
     };
 
     return {
