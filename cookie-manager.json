@@ -8,6 +8,7 @@
   "cookie-banner-id": "cm_cookie_notification",
   "cookie-banner-visibility-class": "hidden",
   "cookie-banner-visible-on-page-with-preference-form": false,
+  "cookie-banner-saved-callback": false,
   "set-checkboxes-in-preference-form": true,
   "domains": [
     "www.domain.com",
