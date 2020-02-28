@@ -317,6 +317,10 @@ const cookieManager = (function () {
         }
 
         savePreferences(categories);
+
+        if (options['cookie-banner-saved-callback'] !== false && typeof options['cookie-banner-saved-callback'] === 'function') {
+            options['cookie-banner-saved-callback']();
+        }
     };
 
     const savePreferences = function(user_cookie_preferences) {

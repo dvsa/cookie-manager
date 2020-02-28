@@ -98,7 +98,7 @@ cm.init(
 
 ### Configuration Schema
 
-### 
+###
 ```json
 {
   "delete-undefined-cookies": true,
@@ -110,6 +110,7 @@ cm.init(
   "cookie-banner-id": "cm_cookie_notification",
   "cookie-banner-visibility-class": "hidden",
   "cookie-banner-visible-on-page-with-preference-form": false,
+  "cookie-banner-saved-callback": false, //accept a function
   "set-checkboxes-in-preference-form": true,
   "cookie-manifest": [
     {
@@ -141,6 +142,14 @@ cm.init(
   ]
 }
 ```
+
+## Development
+### Unit tests
+The Unit Test will fail if the coverage is below 80%. To run the tests run `npm run test` or `npm run test-html`.
+
+#### HTML
+Running `npm run test-html` will generate a nice html output for the unit tests and coverage in `/test` and `/coverage` respectivly.
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

@@ -1,3 +1,6 @@
 .idea/
 .vscode/
 node_modules/
+coverage
+.nyc_output
+test/index.html
