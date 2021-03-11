@@ -1,6 +1,8 @@
-"use strict";
-
-const cookieManager = (function () {
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define('cookieManager', ['exports'], factory) :
+	(factory((global.cookieManager = {})));
+}(this, (function (exports) { 'use strict';
 
     // Prevents JavaScript errors when running on browsers without console/log.
     if(typeof console === "undefined") {
@@ -430,10 +432,6 @@ const cookieManager = (function () {
             && options[optionName].length > 0;
     };
 
-    return {
-        init: init
-    }
+    exports.init = init;
 
-})();
-
-module.exports = cookieManager;
+})));
