@@ -19,6 +19,11 @@ describe('Cookie Manager', () => {
         acceptAllButton.setAttribute('type', 'submit');
         cookieBanner.appendChild(acceptAllButton);
 
+        const rejectAllButton = document.createElement('button');
+        rejectAllButton.setAttribute('id', 'reject-button');
+        rejectAllButton.setAttribute('value', 'reject');
+        cookieBanner.appendChild(rejectAllButton);
+
         document.body.appendChild(cookieBanner);
     };
 
@@ -210,6 +215,27 @@ describe('Cookie Manager', () => {
                     });
 
                 });
+
+                describe('Clicking Reject All button will set preference and hide Cookie Banner', () => {
+
+                    beforeEach(() => {
+                        cookieManager.init(cm_config);
+
+                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[id="reject-button"]');
+                        cookie_banner_reject_all_button.click();
+                    });
+
+                    it('Clicking Reject All creates User Preference Cookie', () => {
+                        expect(cookieExists('cm_user_preferences')).true;
+                    });
+
+                    it('Clicking Reject All hides the Cookie Banner', () => {
+                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
+                        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                    });
+
+                });
+
 
                 describe('Cookie Banner is configured to NOT be displayed on same page as form', () => {
 
