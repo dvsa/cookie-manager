@@ -378,7 +378,8 @@
         if (theBanner !== null) {
             const cookieButtons = theBanner.querySelectorAll('button');
             let acceptAllButton, rejectAllButton;
-            for (let button of cookieButtons) {
+            for (let i = 0; i < cookieButtons.length; i++) {
+                let button = cookieButtons[i];
                 if(button.value === "accept" || button.type === "submit") {
                     acceptAllButton = button;
                     addAcceptAllListener(acceptAllButton);
