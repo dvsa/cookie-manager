@@ -377,16 +377,13 @@
         const theBanner = document.getElementById(options['cookie-banner-id']);
         if (theBanner !== null) {
             const cookieButtons = theBanner.querySelectorAll('button');
-            let acceptAllButton, rejectAllButton;
             for (let i = 0; i < cookieButtons.length; i++) {
                 let button = cookieButtons[i];
                 if(button.value === "accept" || button.type === "submit") {
-                    acceptAllButton = button;
-                    addAcceptAllListener(acceptAllButton);
+                    addAcceptAllListener(button);
                     console.debug("Found and bound accept all button");
                 } else if (button.value === "reject") {
-                    rejectAllButton = button;
-                    addRejectAllListener(rejectAllButton);
+                    addRejectAllListener(button);
                     console.debug("Found and bound reject all button");
                 }
             }
