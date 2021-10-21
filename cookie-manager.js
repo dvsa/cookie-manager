@@ -379,12 +379,12 @@
             const cookieButtons = theBanner.querySelectorAll('button');
             for (let i = 0; i < cookieButtons.length; i++) {
                 let button = cookieButtons[i];
-                if(button.value === "accept" || button.type === "submit") {
-                    addAcceptAllListener(button);
-                    console.debug("Found and bound accept all button");
-                } else if (button.value === "reject") {
+                if (button.value === "reject") {
                     addRejectAllListener(button);
                     console.debug("Found and bound reject all button");
+                } else if (button.value === "accept" || button.type === "submit") {
+                    addAcceptAllListener(button);
+                    console.debug("Found and bound accept all button");
                 }
             }
 
