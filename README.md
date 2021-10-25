@@ -38,15 +38,41 @@ then build your cookie banner markup, and give the wrapping element an ID and ma
 `cookie-banner-visibility-class`; the library will remove the hidden class if it cannot find a user preference cookie
 (or if the content of the cookie is invalid).
 
-If the banner includes a `button` element with the type `submit` the library will also bind to the `click` event of the
-button and upon user click, mark all optional categories as opt-in. The banner's hidden class will then be restored.
+If the banner includes a `button` element with the value `accept` the library will also bind to the `click` event of the
+button and upon user click, mark all optional categories as opt-in. 
+
+If the banner includes a `button` element with the value `reject` the library will also bind to the `click` event of the
+button and upon user click, mark all optional categories as opt-out.
+
+The banner's hidden class will then be restored.
 
 ```html
-<header id="cookie_banner" class="hidden">
-    <h2>Tell us whether you accept cookies</h2>
-    <p>We use cookies to collect information about how you use GOV.UK. We use this information to make the website work as well as possible and improve government services.</p>
-    <button type="submit" class="btn">Accept all cookies</button>
-    <a class="btn" href="set-preferences-page.html">Set cookie preferences</a>
+<header id="cm_cookie_notification" class="hidden">
+    <div class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on [name of service]">
+        <div class="govuk-cookie-banner__message govuk-width-container">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on [name of service]</h2>
+
+                    <div class="govuk-cookie-banner__content">
+                        <p class="govuk-body">We use some essential cookies to make this service work.</p>
+                        <p class="govuk-body">We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-button-group">
+                <button value="accept" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Accept analytics cookies
+                </button>
+                <button value="reject" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Reject analytics cookies
+                </button>
+                <a class="govuk-link" href="#">View cookies</a>
+            </div>
+        </div>
+    </div>
 </header>
 ```
 
