@@ -4,28 +4,37 @@ const expect = chai.expect;
 const cookieManager = require('../cookie-manager');
 const {JSDOM} = require("jsdom");
 
+const clearBody = () => {
+    let node = document.body.lastElementChild;
+    while(node) {
+        document.body.removeChild(node);
+        node = document.body.lastElementChild;
+    }
+};
+
+const createBanner = () => {
+    const cookieBanner = document.createElement('div');
+    cookieBanner.setAttribute('id', 'cm_cookie_notification');
+    cookieBanner.setAttribute('class', 'hidden');
+
+    const acceptAllButton = document.createElement('button');
+    acceptAllButton.setAttribute('type', 'submit');
+    cookieBanner.appendChild(acceptAllButton);
+
+    const rejectAllButton = document.createElement('button');
+    rejectAllButton.setAttribute('id', 'reject-button');
+    rejectAllButton.setAttribute('value', 'reject');
+    cookieBanner.appendChild(rejectAllButton);
+
+    document.body.appendChild(cookieBanner);
+};
+
+
 describe('Cookie Manager', () => {
 
     'use strict';
 
     let cm_config = {};
-
-    const createBanner = () => {
-        const cookieBanner = document.createElement('div');
-        cookieBanner.setAttribute('id', 'cm_cookie_notification');
-        cookieBanner.setAttribute('class', 'hidden');
-
-        const acceptAllButton = document.createElement('button');
-        acceptAllButton.setAttribute('type', 'submit');
-        cookieBanner.appendChild(acceptAllButton);
-
-        const rejectAllButton = document.createElement('button');
-        rejectAllButton.setAttribute('id', 'reject-button');
-        rejectAllButton.setAttribute('value', 'reject');
-        cookieBanner.appendChild(rejectAllButton);
-
-        document.body.appendChild(cookieBanner);
-    };
 
     const createPreferencesForm = () => {
         const userPreferenceForm = document.createElement('form');
@@ -98,14 +107,6 @@ describe('Cookie Manager', () => {
 
     const createUserPreferenceCookie = (preferences) => {
         cookieAdd('cm_user_preferences', JSON.stringify(preferences), 1);
-    };
-
-    const clearBody = () => {
-        let node = document.body.lastElementChild;
-        while(node) {
-            document.body.removeChild(node);
-            node = document.body.lastElementChild;
-        }
     };
 
     const clearCookies = () => {
@@ -527,8 +528,47 @@ describe('Cookie Manager', () => {
                 expect(cookieExists('undefined-cookie-b')).true;
             });
         });
+    });
+});
 
+describe('banner visibility when multiple messages', () => {
+    beforeEach(() => {
+        clearBody();
+        let createBannerMultipleMessages = () => {
+            const cookieBanner = document.createElement('div');
+            cookieBanner.setAttribute('id', 'cm_cookie_notification_messages');
+           
+    
+            const acceptAllButton = document.createElement('button');
+            acceptAllButton.setAttribute('type', 'submit');
+            cookieBanner.appendChild(acceptAllButton);
+            acceptAllButton.setAttribute('class', 'hidden');
+            
+            const rejectAllButton = document.createElement('button');
+            rejectAllButton.setAttribute('id', 'reject-button');
+            rejectAllButton.setAttribute('value', 'reject');
+            rejectAllButton.setAttribute('class', 'hidden');
+            cookieBanner.appendChild(rejectAllButton);
+
+            const rejectMsg = document.createElement('div');
+            rejectMsg.classList.add('govuk-cookie-banner__message')
+            cookieBanner.appendChild(rejectMsg);
+            const acceptMsg = document.createElement('div');
+            acceptMsg.classList.add('govuk-cookie-banner__message')
+            cookieBanner.appendChild(acceptMsg);
+
+            document.body.appendChild(cookieBanner);
+        };
+
+        let cm_config = {};
+        createBannerMultipleMessages();
+        cookieManager.init((cm_config));
     });
 
+    it( 'should be hidden if not multiple messages', () => {
+        createBanner();
+        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
+        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
 
+    })
 });

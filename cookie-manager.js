@@ -321,7 +321,7 @@
         savePreferences(categories);
 
         if (options['cookie-banner-saved-callback'] !== false && typeof options['cookie-banner-saved-callback'] === 'function') {
-            options['cookie-banner-saved-callback']();
+            options['cookie-banner-saved-callback'](event);
         }
     };
 
@@ -406,11 +406,11 @@
         const visible_on_preference_page = options['cookie-banner-visible-on-page-with-preference-form'];
 
         const cm_cookie = options['user-preference-cookie-name'];
-        if (getUserPreferences(cm_cookie)) {
+        if (getUserPreferences(cm_cookie) && isShowingMainMessage()) {
             // User has preferences set, no need to show cookie banner.
             if (!theBanner.classList.contains(bannerVisibilityClass)) {
                 theBanner.classList.add(bannerVisibilityClass);
-                console.debug('Cookie banner was set to visible.')
+                console.debug('Cookie banner was set to not visible.')
             }
         } else {
             if (user_preference_form !== null && visible_on_preference_page === false) {
@@ -423,6 +423,19 @@
 
 
     };
+    const isShowingMainMessage = function() {
+      const messages = document.querySelectorAll(".govuk-cookie-banner__message");
+      if(messages === null || messages === 'undefined' || messages.lenght < 2) {
+        return true;
+      }
+      let hidden = [];
+      messages.forEach(function(msg, index) {
+        if( msg.hasAttribute('hidden')){
+          hidden.push(index)
+        }
+      });
+      return hidden.includes(0) === false;
+    }
 
     const configOptionIsTrue = function (optionName) {
         return options.hasOwnProperty(optionName) && options[optionName] === true;
