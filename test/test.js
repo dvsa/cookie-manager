@@ -129,7 +129,6 @@ describe('Cookie Manager', () => {
             "user-preference-cookie-expiry-days": 365,
             "user-preference-configuration-form-id": "cm_user_preference_form",
             "cookie-banner-id": "cm_cookie_notification",
-            "cookie-banner-visibility-class": "hidden",
             "cookie-banner-visible-on-page-with-preference-form": true,
             "cookie-manifest": [
                 {
