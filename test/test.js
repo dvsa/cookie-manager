@@ -193,7 +193,7 @@ describe('Cookie Manager', () => {
                 it('Is Visible', () => {
                     cookieManager.init(cm_config);
                     const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(false);
+                    expect(cookie_banner_element.hasAttribute('hidden'), 'Expected Cookie Banner to be visible').eql(false);
                 });
 
                 describe('Clicking Accept All button will set preference and hide Cookie Banner', () => {
