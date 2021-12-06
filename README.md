@@ -34,9 +34,7 @@ To disable this functionality, set the configuration value of `cookie-banner-id`
 
 If you want functionality to display a cookie banner when user preferences have not been set (or expired)
 then build your cookie banner markup, and give the wrapping element an ID and match it with the configuration value
-`cookie-banner-id`, and a class which makes it hidden and match that to the configuration value
-`cookie-banner-visibility-class`; the library will remove the hidden class if it cannot find a user preference cookie
-(or if the content of the cookie is invalid).
+`cookie-banner-id`. The banner will be hidden using the HTML [hidden](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden) attribute.
 
 If the banner includes a `button` element with the value `accept` the library will also bind to the `click` event of the
 button and upon user click, mark all optional categories as opt-in. 
@@ -134,7 +132,6 @@ cm.init(
   "user-preference-cookie-expiry-days": 365,
   "user-preference-configuration-form-id": "cookie-manager-form",
   "cookie-banner-id": "cm_cookie_notification",
-  "cookie-banner-visibility-class": "hidden",
   "cookie-banner-visible-on-page-with-preference-form": false,
   "cookie-banner-saved-callback": false, //accept a function
   "set-checkboxes-in-preference-form": true,

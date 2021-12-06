@@ -23,7 +23,6 @@
         "user-preference-configuration-form-id": false,
         "user-preference-saved-callback": false,
         "cookie-banner-id": false,
-        "cookie-banner-visibility-class": "hidden",
         "cookie-banner-visible-on-page-with-preference-form": true,
         "cookie-manifest": []
     };
@@ -245,7 +244,6 @@
         theForm.addEventListener('submit', function (e) {
             savePreferencesFromForm(e);
             manageCookies();
-            checkShouldCookieBannerBeVisible();
         });
         console.debug(`Found and bound to cookie preference form with ID "${options['user-preference-configuration-form-id']}".`);
         setPreferencesInForm();
@@ -321,7 +319,7 @@
         savePreferences(categories);
 
         if (options['cookie-banner-saved-callback'] !== false && typeof options['cookie-banner-saved-callback'] === 'function') {
-            options['cookie-banner-saved-callback']();
+            options['cookie-banner-saved-callback'](event);
         }
     };
 
@@ -343,7 +341,6 @@
             acceptAllButton.addEventListener('click', function (e) {
                 savePreferencesFromCookieBannerAcceptAll(e);
                 manageCookies();
-                checkShouldCookieBannerBeVisible();
             });
         }
     };
@@ -353,16 +350,13 @@
             rejectAllButton.addEventListener('click', function (e) {
                 savePreferencesFromCookieBannerRejectAll(e);
                 manageCookies();
-                checkShouldCookieBannerBeVisible();
             });
         }
     };
 
     const findAndBindCookieBanner = function () {
-        if (!configOptionIsString('cookie-banner-id')
-            && !configOptionIsString('cookie-banner-visibility-class')
-        ) {
-            console.debug('Skipping binding to cookie banner as both cookie-banner-id and cookie-banner-visibility-class are not defined');
+        if (!configOptionIsString('cookie-banner-id')) {
+            console.debug('Skipping binding to cookie banner as both cookie-banner-id and are not defined');
             return;
         }
 
@@ -396,9 +390,8 @@
     const checkShouldCookieBannerBeVisible = function() {
 
         const theBanner = document.getElementById(options['cookie-banner-id']);
-        const bannerVisibilityClass = options['cookie-banner-visibility-class'];
-        if (theBanner === null || bannerVisibilityClass === null) {
-            console.error('Cannot work with cookie banner unless cookie-banner-id and cookie-banner-visibility-class are configured.');
+        if (theBanner === null) {
+            console.error('Cannot work with cookie banner unless cookie-banner-id is configured.');
             return;
         }
 
@@ -408,20 +401,16 @@
         const cm_cookie = options['user-preference-cookie-name'];
         if (getUserPreferences(cm_cookie)) {
             // User has preferences set, no need to show cookie banner.
-            if (!theBanner.classList.contains(bannerVisibilityClass)) {
-                theBanner.classList.add(bannerVisibilityClass);
-                console.debug('Cookie banner was set to visible.')
-            }
+            theBanner.hidden = true;
+            console.debug('Cookie banner was set to not visible.')
         } else {
             if (user_preference_form !== null && visible_on_preference_page === false) {
-                theBanner.classList.add(bannerVisibilityClass);
+                theBanner.hidden = true;
             } else {
-                theBanner.classList.remove(bannerVisibilityClass);
+                theBanner.hidden = false;
                 console.debug('Cookie banner was set to visible.');
             }
         }
-
-
     };
 
     const configOptionIsTrue = function (optionName) {
