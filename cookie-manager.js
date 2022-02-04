@@ -33,7 +33,7 @@
 
         options = defaultOptions;
 
-        for (const item in custom_options) {
+        for (var item in custom_options) {
             options[item] = custom_options[item];
         }
 
@@ -265,7 +265,7 @@
         }
         const userPreferences = getUserPreferences();
 
-        for (const category in userPreferences)
+        for (var category in userPreferences)
         {
             let checkBoxes = theForm.querySelectorAll('input[name="'+category+'"]');
             for (let n = 0; n < checkBoxes.length; n++){
