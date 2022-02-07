@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/cookie-manager",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
   "main": "cookie-manager.js",
   "scripts": {
